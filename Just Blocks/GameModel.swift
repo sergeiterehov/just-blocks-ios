@@ -120,22 +120,22 @@ let tetrominoToSprite: [Tetromino:[[Block]]] = [
         ]),
     ],
     .J: [
-        fillMap(type: .B, map: [
+        fillMap(type: .A, map: [
             0, 0, 0,
             1, 1, 1,
             0, 0, 1
         ]),
-        fillMap(type: .B, map: [
+        fillMap(type: .A, map: [
             0, 1, 0,
             0, 1, 0,
             1, 1, 0
         ]),
-        fillMap(type: .B, map: [
+        fillMap(type: .A, map: [
             1, 0, 0,
             1, 1, 1,
             0, 0, 0
         ]),
-        fillMap(type: .B, map: [
+        fillMap(type: .A, map: [
             0, 1, 1,
             0, 1, 0,
             0, 1, 0

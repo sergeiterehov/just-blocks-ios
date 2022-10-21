@@ -52,7 +52,7 @@ struct BlockView: View {
                     width: blockSize - blockPadding * 2,
                     height: blockSize - blockPadding * 2
                 )
-            ).fill(Color(block == .A ? pallettes[palletteIndex][0] : pallettes[palletteIndex][1]))
+            ).fill(Color(block != .B ? pallettes[palletteIndex][0] : pallettes[palletteIndex][1]))
 
             if (block == .A || block == .B) {
                 Path { path in

@@ -346,7 +346,7 @@ struct ContentView: View {
                             }
                         )
                 }
-                    .offset(x: 0, y: geometry.size.height - 250)
+                .offset(x: 0, y: geometry.size.height - (geometry.size.height < 720 ? 150 : 250))
             }
         }
     }

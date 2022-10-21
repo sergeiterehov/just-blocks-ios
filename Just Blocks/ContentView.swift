@@ -111,7 +111,9 @@ struct TetrominoView: View {
     
     func getCenterOffsetForTetromino(tetromino: Tetromino) -> CGPoint {
         switch (tetromino) {
-        case .I, .O:
+        case .I:
+            return CGPoint(x: -2, y: -2.5)
+        case .O:
             return CGPoint(x: -2, y: -2)
         default:
             return CGPoint(x: -1.5, y: -2)
@@ -126,6 +128,30 @@ struct ContentView: View {
     @State private var leftPressed = false
     @State private var rightPressed = false
     @State private var rotatePressed = false
+    
+    init() {
+        model.onRotate = {
+            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        }
+        model.onMove = {
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        }
+        model.onDrop = {
+            UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+        }
+        model.onClear = {
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+        }
+        model.onTetris = {
+            UINotificationFeedbackGenerator().notificationOccurred(.error)
+        }
+        model.onLevelUp = {
+            //
+        }
+        model.onGameOver = {
+            UINotificationFeedbackGenerator().notificationOccurred(.warning)
+        }
+    }
 
     var body: some View {
         let font = Font.system(size: 20, weight: .bold).monospaced()
@@ -320,7 +346,7 @@ struct ContentView: View {
                             }
                         )
                 }
-                    .offset(x: 0, y: geometry.size.height - 200)
+                    .offset(x: 0, y: geometry.size.height - 250)
             }
         }
     }

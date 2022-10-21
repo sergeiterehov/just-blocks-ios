@@ -174,6 +174,14 @@ class GameModel : ObservableObject {
     @Published var y = 1
     @Published var rotation = 0
     
+    var onRotate = {}
+    var onMove = {}
+    var onDrop = {}
+    var onGameOver = {}
+    var onLevelUp = {}
+    var onClear = {}
+    var onTetris = {}
+    
     var framesToDrop = 0
     
     init() {
@@ -222,18 +230,18 @@ class GameModel : ObservableObject {
     }
     
     func move(dx: Int) {
-        if (testPosition(x: x + dx, y: y, rotation: rotation)) {
+        if (inProgress && testPosition(x: x + dx, y: y, rotation: rotation)) {
             x += dx
             
-            // TODO: onMove
+            onMove()
         }
     }
     
     func rotate() {
-        if (testPosition(x: x, y: y, rotation: rotation + 1)) {
+        if (inProgress && testPosition(x: x, y: y, rotation: rotation + 1)) {
             rotation += 1
             
-            // TODO: onRotate
+            onRotate()
         }
     }
     
@@ -249,14 +257,14 @@ class GameModel : ObservableObject {
                 if (gameOver()) {
                     stop()
 
-                    // TODO: onGameOver
+                    onGameOver()
                 } else {
                     score += softDropRows
 
                     clearLines()
                     generateNextTetromino()
 
-                    // TODO: onDrop
+                    onDrop()
                 }
                 
                 softDrop = false
@@ -276,7 +284,7 @@ class GameModel : ObservableObject {
             level = Int(lines / 10)
             
             if (level != prevLevel) {
-                // TODO: onLevelUp
+                onLevelUp()
             }
             
             // Continue...
@@ -414,19 +422,19 @@ class GameModel : ObservableObject {
         } else if (cleared == 1) {
           score += 40 * (level + 1)
             
-          // TODO: onClear
+          onClear()
         } else if (cleared == 2) {
           score += 100 * (level + 1)
             
-        // TODO: onClear
+            onClear()
         } else if (cleared == 3) {
           score += 300 * (level + 1)
             
-        // TODO: onClear
+            onClear()
         } else if (cleared >= 4) {
           score += 1200 * (level + 1)
             
-        // TODO: onTetris
+            onTetris()
         }
     }
     

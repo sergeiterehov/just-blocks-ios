@@ -153,7 +153,9 @@ struct ContentView: View {
         model.onGameOver = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
             
-            maxScore = model.score
+            if (model.score > maxScore) {
+                maxScore = model.score
+            }
         }
     }
 
@@ -237,6 +239,12 @@ struct ContentView: View {
                         Path(CGRect(x: 0, y: 0, width: 100, height: 100))
                             .stroke(inProgressColor, lineWidth: 4)
                         
+                        Text("NEXT")
+                            .font(font)
+                            .foregroundColor(Color(Theme.textSecond))
+                            .frame(width: 100)
+                            .position(x: 50, y: 20)
+                        
                         TetrominoView(
                             tetromino: model.next,
                             offset: CGPoint(x: 0, y: 0),
@@ -244,7 +252,7 @@ struct ContentView: View {
                             palletteIndex: palletteIndex,
                             center: true
                         )
-                            .offset(x: 50, y: 50)
+                            .offset(x: 50, y: 62)
                     }
                         .offset(x: 0, y: 210)
                     

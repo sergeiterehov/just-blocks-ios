@@ -123,6 +123,8 @@ struct TetrominoView: View {
 
 struct ContentView: View {
     @ObservedObject private var model = GameModel()
+    
+    @AppStorage("maxScore") private var maxScore = 0
 
     @State private var downPressed = false
     @State private var leftPressed = false
@@ -148,8 +150,10 @@ struct ContentView: View {
         model.onLevelUp = {
             //
         }
-        model.onGameOver = {
+        model.onGameOver = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
+            
+            maxScore = model.score
         }
     }
 
@@ -200,7 +204,7 @@ struct ContentView: View {
                         Path(CGRect(x: 0, y: 0, width: 100, height: 110))
                             .stroke(Color(Theme.textThird), lineWidth: 4)
                         
-                        Text("TOP\n-")
+                        Text("TOP\n\(formater.string(from: NSNumber(value: maxScore))!)")
                             .font(font)
                             .foregroundColor(Color(Theme.textSecond))
                             .padding(.leading)

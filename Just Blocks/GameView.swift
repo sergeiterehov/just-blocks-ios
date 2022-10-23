@@ -1,130 +1,13 @@
-//
-//  ContentView.swift
-//  Just Blocks
-//
-//  Created by Сергей Терехов on 19.10.2022.
-//
-
 import SwiftUI
 
-let blockSize = 20
-let blockPadding = 2
-
-let formater = NumberFormatter()
-
-func getColor(r: Int, g: Int, b: Int, a: Double = 1) -> UIColor {
-    return UIColor(red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, alpha: a)
-}
-
-let pallettes = [
-    [getColor(r: 71, g: 134, b: 255), getColor(r: 244, g: 81, b: 93)],
-    [getColor(r: 51, g: 141, b: 153), getColor(r: 76, g: 179, b: 115)],
-    [getColor(r: 47, g: 115, b: 219), getColor(r: 90, g: 175, b: 216)],
-    [getColor(r: 222, g: 117, b: 84), getColor(r: 221, g: 153, b: 85)],
-    [getColor(r: 47, g: 115, b: 219), getColor(r: 140, g: 192, b: 148)],
-    [getColor(r: 165, g: 90, b: 166), getColor(r: 90, g: 175, b: 216)],
-    [getColor(r: 25, g: 169, b: 119), getColor(r: 195, g: 80, b: 81)],
-    [getColor(r: 244, g: 81, b: 93), getColor(r: 245, g: 166, b: 35)],
-]
-
-struct Theme {
-    static let success = getColor(r: 77, g: 202, b: 131)
-    static let danger = getColor(r: 244, g: 81, b: 93)
-
-    static let background = getColor(r: 25, g: 34, b: 40)
-    static let border = getColor(r:255, g: 255, b: 255, a: 0.1)
-
-    static let text = getColor(r: 255, g: 255, b: 255)
-    static let textSecond = getColor(r: 124, g: 137, b: 171)
-    static let textThird = getColor(r: 124, g: 137, b: 171, a: 0.5)
-}
-
-struct BlockView: View {
-    var block: Block
-    var palletteIndex: Int = 0
-
-    var body: some View {
-        if (block != .Empty) {
-            Path(
-                CGRect(
-                    x: 0 + blockPadding,
-                    y: 0 + blockPadding,
-                    width: blockSize - blockPadding * 2,
-                    height: blockSize - blockPadding * 2
-                )
-            ).fill(Color(block != .B ? pallettes[palletteIndex][0] : pallettes[palletteIndex][1]))
-
-            if (block == .A || block == .B) {
-                Path { path in
-                    path.move(to: CGPoint(x: blockPadding * 4, y: 0))
-                    path.addLine(to: CGPoint(x: 0, y: 0))
-                    path.addLine(to: CGPoint(x: 0, y: blockPadding * 4))
-                }
-                    .offset(x: CGFloat(blockPadding * 2), y: CGFloat(blockPadding * 2))
-                    .stroke(.white, lineWidth: CGFloat(blockPadding))
-            } else {
-                Path(
-                    CGRect(
-                        x: blockPadding * 2,
-                        y: blockPadding * 2,
-                        width: blockSize - blockPadding * 4,
-                        height: blockSize - blockPadding * 4
-                    )
-                ).fill(.white)
-            }
-        }
-    }
-}
-
-struct TetrominoView: View {
-    var tetromino: Tetromino
-    var offset: CGPoint
-    var rotation: Int
-    var palletteIndex: Int = 0
-    var center = false
-
-    var body: some View {
-        let spriteVariants = tetrominoToSprite[tetromino]!
-        let sprite = spriteVariants[rotation % spriteVariants.count]
-        let size = sprite.count == 9 ? 3 : 4
-        
-        let centerOffset = center ? getCenterOffsetForTetromino(tetromino: tetromino) : CGPoint()
-
-        ZStack {
-            ForEach(0..<size * size, id: \.self) { index in
-                let y = index / size
-                let x = index % size
-
-                if (y + Int(offset.y) >= 0) {
-                    BlockView(block: sprite[index], palletteIndex: palletteIndex)
-                        .offset(
-                            x: CGFloat((x + Int(offset.x)) * blockSize),
-                            y: CGFloat((y + Int(offset.y)) * blockSize)
-                        )
-                }
-            }
-        }.offset(
-            x: centerOffset.x * CGFloat(blockSize),
-            y: centerOffset.y * CGFloat(blockSize)
-        )
-    }
-    
-    func getCenterOffsetForTetromino(tetromino: Tetromino) -> CGPoint {
-        switch (tetromino) {
-        case .I:
-            return CGPoint(x: -2, y: -2.5)
-        case .O:
-            return CGPoint(x: -2, y: -2)
-        default:
-            return CGPoint(x: -1.5, y: -2)
-        }
-    }
-}
-
-struct ContentView: View {
+struct GameView: View {
     @ObservedObject private var model = GameModel()
     
     @AppStorage("maxScore") private var maxScore = 0
+    
+    @AppStorage("achievementTetris") private var achievementTetris = false
+    @AppStorage("achievementLevel10") private var achievementLevel10 = false
+    @AppStorage("achievement100000") private var achievement100000 = false
 
     @State private var downPressed = false
     @State private var leftPressed = false
@@ -144,11 +27,15 @@ struct ContentView: View {
         model.onClear = {
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
-        model.onTetris = {
+        model.onTetris = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.error)
+            
+            achievementTetris = true
         }
-        model.onLevelUp = {
-            //
+        model.onLevelUp = { [self] in
+            if (model.level == 10) {
+                achievementLevel10 = true
+            }
         }
         model.onGameOver = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
@@ -156,11 +43,14 @@ struct ContentView: View {
             if (model.score > maxScore) {
                 maxScore = model.score
             }
+            
+            if (model.score >= 100000) {
+                achievement100000 = true
+            }
         }
     }
 
     var body: some View {
-        let font = Font.system(size: 20, weight: .bold).monospaced()
         let inProgressColor = model.inProgress ? Color(Theme.success) : Color(Theme.danger)
         let palletteIndex = model.level % pallettes.count
 
@@ -191,7 +81,7 @@ struct ContentView: View {
                     
                     if (!model.inProgress) {
                         Text("TAP PLAY TO PLAY")
-                            .font(font)
+                            .font(mainFont)
                             .multilineTextAlignment(.center)
                             .foregroundColor(Color(Theme.text))
                             .frame(width: 180, height: 60)
@@ -204,17 +94,20 @@ struct ContentView: View {
                 ZStack {
                     ZStack {
                         Path(CGRect(x: 0, y: 0, width: 100, height: 110))
-                            .stroke(Color(Theme.textThird), lineWidth: 4)
+                            .stroke(
+                                Color(maxScore == model.score ? Theme.success : Theme.textThird),
+                                lineWidth: 4
+                            )
                         
                         Text("TOP\n\(formater.string(from: NSNumber(value: maxScore))!)")
-                            .font(font)
+                            .font(mainFont)
                             .foregroundColor(Color(Theme.textSecond))
                             .padding(.leading)
                             .frame(width: 100, alignment: .leading)
                             .position(x: 50, y: 30)
                         
                         Text("SCORE\n\(formater.string(from: NSNumber(value: model.score))!)")
-                            .font(font)
+                            .font(mainFont)
                             .foregroundColor(Color(Theme.text))
                             .padding(.leading)
                             .frame(width: 100, alignment: .leading)
@@ -227,7 +120,7 @@ struct ContentView: View {
                             .stroke(Color(Theme.border), lineWidth: 3)
                         
                         Text("LINES\n\(model.lines)")
-                            .font(font)
+                            .font(mainFont)
                             .foregroundColor(Color(Theme.text))
                             .padding(.leading)
                             .frame(width: 100, alignment: .leading)
@@ -240,19 +133,27 @@ struct ContentView: View {
                             .stroke(inProgressColor, lineWidth: 4)
                         
                         Text("NEXT")
-                            .font(font)
+                            .font(mainFont)
                             .foregroundColor(Color(Theme.textSecond))
                             .frame(width: 100)
                             .position(x: 50, y: 20)
                         
-                        TetrominoView(
-                            tetromino: model.next,
-                            offset: CGPoint(x: 0, y: 0),
-                            rotation: 0,
-                            palletteIndex: palletteIndex,
-                            center: true
-                        )
-                            .offset(x: 50, y: 62)
+                        if (model.inProgress) {
+                            TetrominoView(
+                                tetromino: model.next,
+                                offset: CGPoint(x: 0, y: 0),
+                                rotation: 0,
+                                palletteIndex: palletteIndex,
+                                center: true
+                            )
+                                .offset(x: 50, y: 62)
+                        } else {
+                            Text("?")
+                                .font(headerFont)
+                                .foregroundColor(Color(Theme.text))
+                                .frame(width: 100)
+                                .position(x: 50, y: 60)
+                        }
                     }
                         .offset(x: 0, y: 210)
                     
@@ -261,7 +162,7 @@ struct ContentView: View {
                             .stroke(Color(Theme.border), lineWidth: 3)
                         
                         Text("LEVEL\n\(model.level)")
-                            .font(font)
+                            .font(mainFont)
                             .foregroundColor(Color(Theme.text))
                             .padding(.leading)
                             .frame(width: 100, alignment: .leading)
@@ -270,6 +171,74 @@ struct ContentView: View {
                         .offset(x: 0, y: 330)
                 }
                     .offset(x: geometry.size.width - 100 - 23, y: 20)
+                
+                ZStack {
+                    TetrominoView(tetromino: Tetromino.S, palletteIndex: palletteIndex)
+                        .frame(width: 80, height: 80)
+                        .scaleEffect(2)
+                        .rotationEffect(Angle(degrees: 10))
+                        .position(x: 280, y: 40)
+                    TetrominoView(tetromino: Tetromino.L, palletteIndex: palletteIndex)
+                        .frame(width: 80, height: 80)
+                        .scaleEffect(1.2)
+                        .rotationEffect(Angle(degrees: -10))
+                        .position(x: 270, y: 120)
+                        .opacity(0.8)
+                    TetrominoView(tetromino: Tetromino.T, palletteIndex: palletteIndex)
+                        .frame(width: 80, height: 80)
+                        .scaleEffect(1)
+                        .rotationEffect(Angle(degrees: 20))
+                        .position(x: 180, y: 110)
+                        .opacity(0.7)
+                    TetrominoView(tetromino: Tetromino.J, palletteIndex: palletteIndex)
+                        .frame(width: 80, height: 80)
+                        .scaleEffect(0.6)
+                        .rotationEffect(Angle(degrees: -5))
+                        .position(x: 120, y: 110)
+                        .opacity(0.7)
+                        .blur(radius: 2)
+                    TetrominoView(tetromino: Tetromino.I, rotation: 1, palletteIndex: palletteIndex)
+                        .frame(width: 80, height: 80)
+                        .scaleEffect(0.5)
+                        .rotationEffect(Angle(degrees: 10))
+                        .position(x: 65, y: 135)
+                        .opacity(0.5)
+                        .blur(radius: 3)
+                }
+                    .offset(
+                        x: geometry.size.width - (geometry.size.height < 720 ? 260 : 300),
+                        y: geometry.size.height - (geometry.size.height < 720 ? 120 : 100)
+                    )
+                    .opacity(0.7)
+                
+                ZStack {
+                    if (achievementTetris) {
+                        TetrominoView(tetromino: Tetromino.I, palletteIndex: 3)
+                            .frame(width: 80, height: 80)
+                            .rotationEffect(Angle(degrees: 10))
+                            .scaleEffect(0.3)
+                            .position(x: 40, y: 40)
+                    }
+                    if (achievementLevel10) {
+                        TetrominoView(tetromino: Tetromino.S, palletteIndex: 3)
+                            .frame(width: 80, height: 80)
+                            .rotationEffect(Angle(degrees: -5))
+                            .scaleEffect(0.3)
+                            .position(x: 40, y: 65)
+                    }
+                    if (achievement100000) {
+                        TetrominoView(tetromino: Tetromino.L, palletteIndex: 3)
+                            .frame(width: 80, height: 80)
+                            .rotationEffect(Angle(degrees: -10))
+                            .scaleEffect(0.3)
+                            .position(x: 40, y: 90)
+                    }
+                }
+                    .offset(
+                        x: 0,
+                        y: geometry.size.height - (geometry.size.height < 720 ? 120 : 100)
+                    )
+                    .blur(radius: 3)
                 
                 ZStack {
                     ZStack {
@@ -332,6 +301,7 @@ struct ContentView: View {
                             )
                     }
                         .offset(x: 10, y: 0)
+                        .opacity(model.inProgress ? 1 : 0.4)
                     
                     Image(systemName: model.inProgress ? "arrow.clockwise" : "play.fill")
                         .font(.system(size: 30))
@@ -364,8 +334,8 @@ struct ContentView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct GameView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        GameView()
     }
 }

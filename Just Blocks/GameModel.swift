@@ -186,13 +186,13 @@ class GameModel : ObservableObject {
     
     init() {
         reset()
+        
+        y = -10
 
         clock = Timer.scheduledTimer(
             withTimeInterval: 1.0 / fps,
             repeats: true
         ) { timer in self.frame() }
-        
-        run()
     }
     
     deinit {

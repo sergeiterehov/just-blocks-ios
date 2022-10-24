@@ -333,8 +333,6 @@ struct GameView: View {
                                 if (!rotatePressed) {
                                     rotatePressed = true
                                     
-                                    print(geometry.size.height)
-                                    
                                     if (model.inProgress) {
                                         model.rotate()
                                     } else {

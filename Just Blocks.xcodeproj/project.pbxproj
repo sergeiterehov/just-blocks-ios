@@ -16,6 +16,13 @@
 		8DC039CB29056B0300EB11F9 /* theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC039CA29056B0300EB11F9 /* theme.swift */; };
 		8DC039CD29056B5100EB11F9 /* TetrominoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC039CC29056B5100EB11F9 /* TetrominoView.swift */; };
 		8DC039CF2905875700EB11F9 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC039CE2905875700EB11F9 /* MainView.swift */; };
+		8DC039F5290735C100EB11F9 /* rotate.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039EE290735C000EB11F9 /* rotate.mp3 */; };
+		8DC039F6290735C100EB11F9 /* game-over.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039EF290735C000EB11F9 /* game-over.mp3 */; };
+		8DC039F7290735C100EB11F9 /* drop.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039F0290735C000EB11F9 /* drop.mp3 */; };
+		8DC039F8290735C100EB11F9 /* move.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039F1290735C000EB11F9 /* move.mp3 */; };
+		8DC039F9290735C100EB11F9 /* clear.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039F2290735C000EB11F9 /* clear.mp3 */; };
+		8DC039FA290735C100EB11F9 /* level-up.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039F3290735C100EB11F9 /* level-up.mp3 */; };
+		8DC039FB290735C100EB11F9 /* tetris.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039F4290735C100EB11F9 /* tetris.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +36,13 @@
 		8DC039CA29056B0300EB11F9 /* theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = theme.swift; sourceTree = "<group>"; };
 		8DC039CC29056B5100EB11F9 /* TetrominoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetrominoView.swift; sourceTree = "<group>"; };
 		8DC039CE2905875700EB11F9 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		8DC039EE290735C000EB11F9 /* rotate.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = rotate.mp3; sourceTree = "<group>"; };
+		8DC039EF290735C000EB11F9 /* game-over.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "game-over.mp3"; sourceTree = "<group>"; };
+		8DC039F0290735C000EB11F9 /* drop.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = drop.mp3; sourceTree = "<group>"; };
+		8DC039F1290735C000EB11F9 /* move.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = move.mp3; sourceTree = "<group>"; };
+		8DC039F2290735C000EB11F9 /* clear.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = clear.mp3; sourceTree = "<group>"; };
+		8DC039F3290735C100EB11F9 /* level-up.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "level-up.mp3"; sourceTree = "<group>"; };
+		8DC039F4290735C100EB11F9 /* tetris.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tetris.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +75,7 @@
 		8D77ABB428FF4E58002E6BC3 /* Just Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				8DC039D0290727AF00EB11F9 /* Sounds */,
 				8D77ABB528FF4E58002E6BC3 /* Just_BlocksApp.swift */,
 				8D77ABB728FF4E58002E6BC3 /* GameView.swift */,
 				8D77ABB928FF4E59002E6BC3 /* Assets.xcassets */,
@@ -80,6 +95,20 @@
 				8D77ABBC28FF4E59002E6BC3 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		8DC039D0290727AF00EB11F9 /* Sounds */ = {
+			isa = PBXGroup;
+			children = (
+				8DC039F2290735C000EB11F9 /* clear.mp3 */,
+				8DC039F0290735C000EB11F9 /* drop.mp3 */,
+				8DC039EF290735C000EB11F9 /* game-over.mp3 */,
+				8DC039F3290735C100EB11F9 /* level-up.mp3 */,
+				8DC039F1290735C000EB11F9 /* move.mp3 */,
+				8DC039EE290735C000EB11F9 /* rotate.mp3 */,
+				8DC039F4290735C100EB11F9 /* tetris.mp3 */,
+			);
+			path = Sounds;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -141,7 +170,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D77ABBD28FF4E59002E6BC3 /* Preview Assets.xcassets in Resources */,
+				8DC039F7290735C100EB11F9 /* drop.mp3 in Resources */,
 				8D77ABBA28FF4E59002E6BC3 /* Assets.xcassets in Resources */,
+				8DC039F6290735C100EB11F9 /* game-over.mp3 in Resources */,
+				8DC039FA290735C100EB11F9 /* level-up.mp3 in Resources */,
+				8DC039F5290735C100EB11F9 /* rotate.mp3 in Resources */,
+				8DC039F8290735C100EB11F9 /* move.mp3 in Resources */,
+				8DC039FB290735C100EB11F9 /* tetris.mp3 in Resources */,
+				8DC039F9290735C100EB11F9 /* clear.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,7 +321,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"Just Blocks/Preview Content\"";
 				DEVELOPMENT_TEAM = 7CCNV27PZD;
 				ENABLE_PREVIEWS = YES;
@@ -301,7 +337,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.4;
+				MARKETING_VERSION = 1.0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "sergeiterehov.Just-Blocks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -316,7 +352,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"Just Blocks/Preview Content\"";
 				DEVELOPMENT_TEAM = 7CCNV27PZD;
 				ENABLE_PREVIEWS = YES;
@@ -332,7 +368,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.4;
+				MARKETING_VERSION = 1.0.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "sergeiterehov.Just-Blocks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

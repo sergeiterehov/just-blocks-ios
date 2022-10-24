@@ -17,25 +17,37 @@ struct GameView: View {
     init() {
         model.onRotate = {
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+            
+            rotateSound.play()
         }
         model.onMove = {
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            
+            moveSound.play()
         }
         model.onDrop = {
             UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
+            
+            dropSound.play()
         }
         model.onClear = {
             UINotificationFeedbackGenerator().notificationOccurred(.success)
+            
+            clearSound.play()
         }
         model.onTetris = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.error)
             
             achievementTetris = true
+
+            tetrisSound.play()
         }
         model.onLevelUp = { [self] in
             if (model.level == 10) {
                 achievementLevel10 = true
             }
+
+            levelUpSound.play()
         }
         model.onGameOver = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
@@ -47,6 +59,8 @@ struct GameView: View {
             if (model.score >= 100000) {
                 achievement100000 = true
             }
+            
+            gameOverSound.play()
         }
     }
 
@@ -55,6 +69,8 @@ struct GameView: View {
         let palletteIndex = model.level % pallettes.count
 
         GeometryReader { geometry in
+            let smallScreen = geometry.size.height < 730
+
             Color(Theme.background).ignoresSafeArea()
 
             ZStack {
@@ -206,8 +222,8 @@ struct GameView: View {
                         .blur(radius: 3)
                 }
                     .offset(
-                        x: geometry.size.width - (geometry.size.height < 720 ? 260 : 300),
-                        y: geometry.size.height - (geometry.size.height < 720 ? 120 : 100)
+                        x: geometry.size.width - (smallScreen ? 260 : 300),
+                        y: geometry.size.height - (smallScreen ? 120 : 100)
                     )
                     .opacity(0.7)
                 
@@ -236,7 +252,7 @@ struct GameView: View {
                 }
                     .offset(
                         x: 0,
-                        y: geometry.size.height - (geometry.size.height < 720 ? 120 : 100)
+                        y: geometry.size.height - (smallScreen ? 120 : 100)
                     )
                     .blur(radius: 3)
                 
@@ -317,10 +333,14 @@ struct GameView: View {
                                 if (!rotatePressed) {
                                     rotatePressed = true
                                     
+                                    print(geometry.size.height)
+                                    
                                     if (model.inProgress) {
                                         model.rotate()
                                     } else {
                                         model.run()
+                                        
+                                        dropSound.play()
                                     }
                                 }
                             }.onEnded { _ in
@@ -328,7 +348,7 @@ struct GameView: View {
                             }
                         )
                 }
-                .offset(x: 0, y: geometry.size.height - (geometry.size.height < 720 ? 150 : 250))
+                .offset(x: 0, y: geometry.size.height - (smallScreen ? 150 : 250))
             }
         }
     }

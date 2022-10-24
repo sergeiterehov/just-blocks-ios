@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import AVKit
 
 let blockSize = 20
 let blockPadding = 2
@@ -34,3 +35,30 @@ struct Theme {
     static let textSecond = getColor(r: 124, g: 137, b: 171)
     static let textThird = getColor(r: 124, g: 137, b: 171, a: 0.5)
 }
+
+struct SoundPlayer {
+    private var audioPlayer: AVAudioPlayer?
+
+    init(name: String) {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "mp3") else { return }
+
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: url)
+        } catch let error {
+            print("Sound Error \(error.localizedDescription)")
+        }
+    }
+    
+    func play() {
+        audioPlayer?.currentTime = 0.0
+        audioPlayer?.play()
+    }
+}
+
+let rotateSound = SoundPlayer(name: "rotate")
+let moveSound = SoundPlayer(name: "move")
+let dropSound = SoundPlayer(name: "drop")
+let clearSound = SoundPlayer(name: "clear")
+let tetrisSound = SoundPlayer(name: "tetris")
+let levelUpSound = SoundPlayer(name: "level-up")
+let gameOverSound = SoundPlayer(name: "game-over")

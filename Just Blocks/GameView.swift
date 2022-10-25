@@ -3,16 +3,13 @@ import SwiftUI
 struct GameView: View {
     @ObservedObject private var model = GameModel()
     
+    @State private var displayDotsField = false
+    
     @AppStorage("maxScore") private var maxScore = 0
     
     @AppStorage("achievementTetris") private var achievementTetris = false
     @AppStorage("achievementLevel10") private var achievementLevel10 = false
     @AppStorage("achievement100000") private var achievement100000 = false
-
-    @State private var downPressed = false
-    @State private var leftPressed = false
-    @State private var rightPressed = false
-    @State private var rotatePressed = false
     
     init() {
         model.onRotate = {
@@ -70,6 +67,9 @@ struct GameView: View {
 
         GeometryReader { geometry in
             let smallScreen = geometry.size.height < 730
+            let extraSmallScreen = geometry.size.width < 370
+            
+            let arrowButtonsSpace = extraSmallScreen ? 50.0 : 60.0
 
             Color(Theme.background).ignoresSafeArea()
 
@@ -83,7 +83,11 @@ struct GameView: View {
                             let y = index / model.width
                             let x = index % model.width
 
-                            BlockView(block: model.field[index], palletteIndex: palletteIndex)
+                            BlockView(
+                                block: model.field[index],
+                                palletteIndex: palletteIndex,
+                                dot: displayDotsField
+                            )
                                 .offset(x: CGFloat(x * blockSize), y: CGFloat(y * blockSize))
                         }
                     }
@@ -169,6 +173,9 @@ struct GameView: View {
                                 .foregroundColor(Color(Theme.text))
                                 .frame(width: 100)
                                 .position(x: 50, y: 60)
+                                .onTapGesture {
+                                    displayDotsField = !displayDotsField
+                                }
                         }
                     }
                         .offset(x: 0, y: 210)
@@ -188,42 +195,10 @@ struct GameView: View {
                 }
                     .offset(x: geometry.size.width - 100 - 23, y: 20)
                 
-                ZStack {
-                    TetrominoView(tetromino: Tetromino.S, palletteIndex: palletteIndex)
-                        .frame(width: 80, height: 80)
-                        .scaleEffect(2)
-                        .rotationEffect(Angle(degrees: 10))
-                        .position(x: 280, y: 40)
-                    TetrominoView(tetromino: Tetromino.L, palletteIndex: palletteIndex)
-                        .frame(width: 80, height: 80)
-                        .scaleEffect(1.2)
-                        .rotationEffect(Angle(degrees: -10))
-                        .position(x: 270, y: 120)
-                        .opacity(0.8)
-                    TetrominoView(tetromino: Tetromino.T, palletteIndex: palletteIndex)
-                        .frame(width: 80, height: 80)
-                        .scaleEffect(1)
-                        .rotationEffect(Angle(degrees: 20))
-                        .position(x: 180, y: 110)
-                        .opacity(0.7)
-                    TetrominoView(tetromino: Tetromino.J, palletteIndex: palletteIndex)
-                        .frame(width: 80, height: 80)
-                        .scaleEffect(0.6)
-                        .rotationEffect(Angle(degrees: -5))
-                        .position(x: 120, y: 110)
-                        .opacity(0.7)
-                        .blur(radius: 2)
-                    TetrominoView(tetromino: Tetromino.I, rotation: 1, palletteIndex: palletteIndex)
-                        .frame(width: 80, height: 80)
-                        .scaleEffect(0.5)
-                        .rotationEffect(Angle(degrees: 10))
-                        .position(x: 65, y: 135)
-                        .opacity(0.5)
-                        .blur(radius: 3)
-                }
+                DesignTetrominosView(palletteIndex: palletteIndex)
                     .offset(
                         x: geometry.size.width - (smallScreen ? 260 : 300),
-                        y: geometry.size.height - (smallScreen ? 120 : 100)
+                        y: geometry.size.height - 120
                     )
                     .opacity(0.7)
                 
@@ -258,96 +233,131 @@ struct GameView: View {
                 
                 ZStack {
                     ZStack {
-                        Image(systemName: "arrow.left")
-                            .padding(30)
-                            .foregroundColor(Color(Theme.textSecond))
-                            .background(Circle().fill(Color(Theme.border)))
-                            .position(x: 60, y: 0)
-                            .gesture(
-                                DragGesture(
-                                    minimumDistance: 0,
-                                    coordinateSpace: .local
-                                ).onChanged { _ in
-                                    if (!leftPressed) {
-                                        leftPressed = true
-                                        model.move(dx: -1)
-                                    }
-                                }.onEnded { _ in
-                                    leftPressed = false
-                                }
-                            )
+                        ControlButtonView(
+                            icon: "arrow.left",
+                            onTap: {
+                                model.move(dx: -1)
+                            },
+                            extraSmallScreen: extraSmallScreen
+                        )
+                            .position(x: -arrowButtonsSpace, y: 0)
                         
-                        Image(systemName: "arrow.right")
-                            .padding(30)
-                            .foregroundColor(Color(Theme.textSecond))
-                            .background(Circle().fill(Color(Theme.border)))
-                            .position(x: 180, y: 0)
-                            .gesture(
-                                DragGesture(
-                                    minimumDistance: 0,
-                                    coordinateSpace: .local
-                                ).onChanged { _ in
-                                    if (!rightPressed) {
-                                        rightPressed = true
-                                        model.move(dx: 1)
-                                    }
-                                }.onEnded { _ in
-                                    rightPressed = false
-                                }
-                            )
+                        ControlButtonView(
+                            icon: "arrow.right",
+                            onTap: {
+                                model.move(dx: 1)
+                            },
+                            extraSmallScreen: extraSmallScreen
+                        )
+                            .position(x: arrowButtonsSpace, y: 0)
                         
-                        Image(systemName: "arrow.down")
-                            .padding(30)
-                            .foregroundColor(Color(Theme.textSecond))
-                            .background(Circle().fill(Color(Theme.border)))
-                            .position(x: 120, y: 80)
-                            .gesture(
-                                DragGesture(
-                                    minimumDistance: 0,
-                                    coordinateSpace: .local
-                                ).onChanged { _ in
-                                    if (!downPressed) {
-                                        downPressed = true
-                                        model.softDrop = true
-                                    }
-                                }.onEnded { _ in
-                                    downPressed = false
-                                    model.softDrop = false
-                                }
-                            )
+                        ControlButtonView(
+                            icon: "arrow.down",
+                            onTap: {
+                                model.softDrop = true
+                            },
+                            onUntap: {
+                                model.softDrop = false
+                            },
+                            extraSmallScreen: extraSmallScreen
+                        )
+                            .position(x: 0, y: arrowButtonsSpace + 20)
                     }
-                        .offset(x: 10, y: 0)
+                        .offset(x: 125, y: 0)
                         .opacity(model.inProgress ? 1 : 0.4)
                     
-                    Image(systemName: model.inProgress ? "arrow.clockwise" : "play.fill")
-                        .font(.system(size: 30))
-                        .padding(34)
-                        .foregroundColor(Color(model.inProgress ? Theme.textSecond : Theme.text))
-                        .background(Circle().fill(Color(Theme.border)))
-                        .position(x: geometry.size.width - 80, y: 0)
-                        .gesture(
-                            DragGesture(
-                                minimumDistance: 0,
-                                coordinateSpace: .local
-                            ).onChanged { _ in
-                                if (!rotatePressed) {
-                                    rotatePressed = true
-                                    
-                                    if (model.inProgress) {
-                                        model.rotate()
-                                    } else {
-                                        model.run()
-                                        
-                                        dropSound.play()
-                                    }
-                                }
-                            }.onEnded { _ in
-                                rotatePressed = false
+                    ControlButtonView(
+                        icon: model.inProgress ? "arrow.clockwise" : "play.fill",
+                        onTap: {
+                            if (model.inProgress) {
+                                model.rotate()
+                            } else {
+                                model.run()
+                                
+                                dropSound.play()
                             }
-                        )
+                        },
+                        color: Color(model.inProgress ? Theme.textSecond : Theme.text),
+                        padding: 34,
+                        extraSmallScreen: extraSmallScreen
+                    )
+                        .font(.system(size: extraSmallScreen ? 24 : 30))
+                        .position(x: geometry.size.width - 80, y: 0)
                 }
                 .offset(x: 0, y: geometry.size.height - (smallScreen ? 150 : 250))
             }
+        }
+    }
+}
+
+struct ControlButtonView : View {
+    var icon = "arrow.left"
+    var onTap = {}
+    var onUntap = {}
+    var color = Color(Theme.textSecond)
+    var padding = 30.0
+    var extraSmallScreen = false
+    
+    @State private var pressed = false
+
+    var body: some View {
+        Image(systemName: icon)
+            .padding(extraSmallScreen ? 24 : self.padding)
+            .foregroundColor(color)
+            .background(Circle().fill(Color(Theme.border)))
+            .gesture(
+                DragGesture(
+                    minimumDistance: 0,
+                    coordinateSpace: .local
+                ).onChanged { _ in
+                    if (!pressed) {
+                        pressed = true
+                        onTap()
+                    }
+                }.onEnded { _ in
+                    pressed = false
+                    onUntap()
+                }
+            )
+    }
+}
+
+struct DesignTetrominosView : View {
+    var palletteIndex = 0
+
+    var body: some View {
+        ZStack {
+            TetrominoView(tetromino: Tetromino.S, palletteIndex: palletteIndex)
+                .frame(width: 80, height: 80)
+                .scaleEffect(2)
+                .rotationEffect(Angle(degrees: 10))
+                .position(x: 280, y: 40)
+            TetrominoView(tetromino: Tetromino.L, palletteIndex: palletteIndex)
+                .frame(width: 80, height: 80)
+                .scaleEffect(1.2)
+                .rotationEffect(Angle(degrees: -10))
+                .position(x: 270, y: 120)
+                .opacity(0.8)
+            TetrominoView(tetromino: Tetromino.T, palletteIndex: palletteIndex)
+                .frame(width: 80, height: 80)
+                .scaleEffect(1)
+                .rotationEffect(Angle(degrees: 20))
+                .position(x: 180, y: 110)
+                .opacity(0.7)
+            TetrominoView(tetromino: Tetromino.J, palletteIndex: palletteIndex)
+                .frame(width: 80, height: 80)
+                .scaleEffect(0.6)
+                .rotationEffect(Angle(degrees: -5))
+                .position(x: 120, y: 110)
+                .opacity(0.7)
+                .blur(radius: 2)
+            TetrominoView(tetromino: Tetromino.I, rotation: 1, palletteIndex: palletteIndex)
+                .frame(width: 80, height: 80)
+                .scaleEffect(0.5)
+                .rotationEffect(Angle(degrees: 10))
+                .position(x: 65, y: 135)
+                .opacity(0.5)
+                .blur(radius: 3)
         }
     }
 }

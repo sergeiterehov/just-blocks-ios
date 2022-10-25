@@ -4,6 +4,7 @@ import SwiftUI
 struct BlockView: View {
     var block: Block
     var palletteIndex: Int = 0
+    var dot: Bool = false
 
     var body: some View {
         if (block != .Empty) {
@@ -34,6 +35,8 @@ struct BlockView: View {
                     )
                 ).fill(.white)
             }
+        } else if (dot) {
+            Path(CGRect(x: blockSize / 2, y: blockSize / 2, width: 2, height: 2)).fill(Color(Theme.border))
         }
     }
 }

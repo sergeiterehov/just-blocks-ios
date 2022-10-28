@@ -17,7 +17,7 @@ enum Tetromino : CaseIterable {
   case J
 }
 
-enum Block {
+enum Block : CaseIterable {
   case Empty
   case A
   case B
@@ -163,6 +163,7 @@ class GameModel : ObservableObject {
     @Published var field: [Block] = []
 
     @Published var inProgress = false
+    @Published var inPause = false
     @Published var softDrop = false
     
     var softDropRows = 0;
@@ -209,6 +210,7 @@ class GameModel : ObservableObject {
         lines = 0
         score = 0
         softDropRows = 0
+        inPause = false
         framesToDrop = levelToFramesPerRow[level]
         
         generateNextTetromino()
@@ -227,6 +229,20 @@ class GameModel : ObservableObject {
     
     func stop() {
         inProgress = false
+    }
+    
+    func pause() {
+        if (inProgress) {
+            inProgress = false
+            inPause = true
+        }
+    }
+    
+    func play() {
+        if (inPause) {
+            inProgress = true
+            inPause = false
+        }
     }
     
     func move(dx: Int) {

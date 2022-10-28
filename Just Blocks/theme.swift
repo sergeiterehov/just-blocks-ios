@@ -8,6 +8,7 @@ let blockPadding = 2
 let formater = NumberFormatter()
 let mainFont = Font.system(size: 20, weight: .bold).monospaced()
 let headerFont = Font.system(size: 40, weight: .bold).monospaced()
+let smallFont = Font.system(size: 14, weight: .bold).monospaced()
 
 func getColor(r: Int, g: Int, b: Int, a: Double = 1) -> UIColor {
     return UIColor(red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, alpha: a)

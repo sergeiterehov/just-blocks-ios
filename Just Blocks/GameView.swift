@@ -8,6 +8,7 @@ struct GameView: View {
     @ObservedObject private var model = GameModel()
     
     @State private var displayDotsField = false
+    @State private var levelChanged = false
     
     @AppStorage("maxScore") private var maxScore = 0
     @AppStorage("gamesCounter") private var gamesCounter = 0
@@ -19,6 +20,10 @@ struct GameView: View {
     @AppStorage("achievementLevel18") private var achievementLevel18 = false
     
     init() {
+        model.onRun = { [self] in
+            // reset local state
+            levelChanged = false
+        }
         model.onRotate = {
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
             
@@ -42,13 +47,22 @@ struct GameView: View {
         model.onTetris = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.error)
             
-            achievementTetris = true
+            if (!achievementTetris) {
+                achievementTetris = true
+                achievementSound.play()
+            }
 
             tetrisSound.play()
         }
         model.onLevelUp = { [self] in
-            if (model.level == 10) {
+            if (!achievementLevel10 && model.level == 10 && !levelChanged) {
                 achievementLevel10 = true
+                achievementSound.play()
+            }
+            
+            if (!achievementLevel18 && model.level == 18 && !levelChanged) {
+                achievementLevel18 = true
+                achievementSound.play()
             }
 
             levelUpSound.play()
@@ -64,12 +78,14 @@ struct GameView: View {
                 maxScore = model.score
             }
             
-            if (model.score >= 100000) {
+            if (!achievement100000 && model.score >= 100000) {
                 achievement100000 = true
+                achievementSound.play()
             }
             
-            if (gamesCounter >= 1000) {
+            if (!achievementGames1000 && gamesCounter >= 1000) {
                 achievementGames1000 = true
+                achievementSound.play()
             }
             
             gameOverSound.play()
@@ -243,6 +259,17 @@ struct GameView: View {
                                     .padding(.leading)
                                     .frame(width: 100, alignment: .leading)
                                     .position(x: 50, y: 30)
+                                    .onLongPressGesture {
+                                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                                        
+                                        if (model.inPause) {
+                                            if (model.level < 10) {
+                                                model.level = 10
+                                            } else if (model.level < 15) {
+                                                model.level = 15;
+                                            }
+                                        }
+                                    }
                             }
                                 .offset(x: 0, y: 330)
                         }

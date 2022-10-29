@@ -175,6 +175,7 @@ class GameModel : ObservableObject {
     @Published var y = 1
     @Published var rotation = 0
     
+    var onRun = {}
     var onRotate = {}
     var onMove = {}
     var onDrop = {}
@@ -225,6 +226,8 @@ class GameModel : ObservableObject {
         reset()
 
         inProgress = true
+        
+        onRun()
     }
     
     func stop() {
@@ -295,11 +298,11 @@ class GameModel : ObservableObject {
             
             // Level
             
-            let prevLevel = level
-            
-            level = Int(lines / 10)
-            
-            if (level != prevLevel) {
+            let nextLevel = Int(lines / 10)
+
+            if (nextLevel > level) {
+                level = nextLevel
+                
                 onLevelUp()
             }
             

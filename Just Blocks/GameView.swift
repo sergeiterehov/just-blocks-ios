@@ -9,6 +9,7 @@ struct GameView: View {
     
     @State private var displayDotsField = false
     @State private var levelChanged = false
+    @State private var gameApprovedForCounter = false
     
     @AppStorage("maxScore") private var maxScore = 0
     @AppStorage("gamesCounter") private var gamesCounter = 0
@@ -23,6 +24,7 @@ struct GameView: View {
         model.onRun = { [self] in
             // reset local state
             levelChanged = false
+            gameApprovedForCounter = false
         }
         model.onRotate = {
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
@@ -64,13 +66,15 @@ struct GameView: View {
                 achievementLevel18 = true
                 achievementSound.play()
             }
+            
+            gameApprovedForCounter = true
 
             levelUpSound.play()
         }
         model.onGameOver = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
             
-            if (model.level > 0) {
+            if (gameApprovedForCounter) {
                 gamesCounter += 1
             }
             

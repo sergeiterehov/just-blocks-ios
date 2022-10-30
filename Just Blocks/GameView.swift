@@ -2,14 +2,18 @@ import SwiftUI
 
 let debugAchievementsView = false
 
+class GameState : ObservableObject {
+    @Published var levelChanged = 0
+    @Published var gameApprovedForCounter = false
+}
+
 struct GameView: View {
     @Environment(\.scenePhase) var scenePhase
 
     @ObservedObject private var model = GameModel()
+    @ObservedObject private var state = GameState()
     
-    @State private var displayDotsField = false
-    @State private var levelChanged = false
-    @State private var gameApprovedForCounter = false
+    @AppStorage("displayDotsField") private var displayDotsField = false
     
     @AppStorage("maxScore") private var maxScore = 0
     @AppStorage("gamesCounter") private var gamesCounter = 0
@@ -23,8 +27,8 @@ struct GameView: View {
     init() {
         model.onRun = { [self] in
             // reset local state
-            levelChanged = false
-            gameApprovedForCounter = false
+            state.levelChanged = 0
+            state.gameApprovedForCounter = false
         }
         model.onRotate = {
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
@@ -41,13 +45,17 @@ struct GameView: View {
             
             dropSound.play()
         }
-        model.onClear = {
+        model.onClear = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.success)
+            
+            state.gameApprovedForCounter = true
             
             clearSound.play()
         }
         model.onTetris = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.error)
+            
+            state.gameApprovedForCounter = true
             
             if (!achievementTetris) {
                 achievementTetris = true
@@ -57,24 +65,22 @@ struct GameView: View {
             tetrisSound.play()
         }
         model.onLevelUp = { [self] in
-            if (!achievementLevel10 && model.level == 10 && !levelChanged) {
+            if (!achievementLevel10 && model.level == 10 && state.levelChanged < 10) {
                 achievementLevel10 = true
                 achievementSound.play()
             }
             
-            if (!achievementLevel18 && model.level == 18 && !levelChanged) {
+            if (!achievementLevel18 && model.level == 18 && state.levelChanged < 18) {
                 achievementLevel18 = true
                 achievementSound.play()
             }
-            
-            gameApprovedForCounter = true
 
             levelUpSound.play()
         }
         model.onGameOver = { [self] in
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
             
-            if (gameApprovedForCounter) {
+            if (state.gameApprovedForCounter) {
                 gamesCounter += 1
             }
             
@@ -269,8 +275,10 @@ struct GameView: View {
                                         if (model.inPause) {
                                             if (model.level < 10) {
                                                 model.level = 10
+                                                state.levelChanged = 10
                                             } else if (model.level < 15) {
-                                                model.level = 15;
+                                                model.level = 15
+                                                state.levelChanged = 15
                                             }
                                         }
                                     }

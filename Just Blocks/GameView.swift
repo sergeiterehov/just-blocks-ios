@@ -3,7 +3,6 @@ import SwiftUI
 let debugAchievementsView = false
 
 class GameState : ObservableObject {
-    @Published var levelChanged = 0
     @Published var gameApprovedForCounter = false
 }
 
@@ -27,7 +26,6 @@ struct GameView: View {
     init() {
         model.onRun = { [self] in
             // reset local state
-            state.levelChanged = 0
             state.gameApprovedForCounter = false
         }
         model.onRotate = {
@@ -65,14 +63,16 @@ struct GameView: View {
             tetrisSound.play()
         }
         model.onLevelUp = { [self] in
-            if (!achievementLevel10 && model.level == 10 && state.levelChanged < 10) {
-                achievementLevel10 = true
-                achievementSound.play()
-            }
-            
-            if (!achievementLevel18 && model.level == 18 && state.levelChanged < 18) {
-                achievementLevel18 = true
-                achievementSound.play()
+            if (model.level > model.startLevel) {
+                if (!achievementLevel10 && model.level == 10) {
+                    achievementLevel10 = true
+                    achievementSound.play()
+                }
+                
+                if (!achievementLevel18 && model.level == 18) {
+                    achievementLevel18 = true
+                    achievementSound.play()
+                }
             }
 
             levelUpSound.play()
@@ -269,18 +269,10 @@ struct GameView: View {
                                     .padding(.leading)
                                     .frame(width: 100, alignment: .leading)
                                     .position(x: 50, y: 30)
-                                    .onLongPressGesture {
-                                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                                    .onTapGesture {
+                                        UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
                                         
-                                        if (model.inPause) {
-                                            if (model.level < 10) {
-                                                model.level = 10
-                                                state.levelChanged = 10
-                                            } else if (model.level < 15) {
-                                                model.level = 15
-                                                state.levelChanged = 15
-                                            }
-                                        }
+                                        model.changeStartLevel()
                                     }
                             }
                                 .offset(x: 0, y: 330)

@@ -156,6 +156,8 @@ class GameModel : ObservableObject {
     
     var clock: Timer?;
     
+    @Published var startLevel = 0
+    
     @Published var level = 0
     @Published var lines = 0
     @Published var score = 0
@@ -165,6 +167,8 @@ class GameModel : ObservableObject {
     @Published var inProgress = false
     @Published var inPause = false
     @Published var softDrop = false
+    
+    @Published var isGameOver = false
     
     var softDropRows = 0;
 
@@ -207,15 +211,33 @@ class GameModel : ObservableObject {
         y = 0
         rotation = 0
         softDrop = false
-        level = 0
+        level = startLevel
         lines = 0
         score = 0
         softDropRows = 0
         inPause = false
+        inProgress = false
+        isGameOver = true
         framesToDrop = levelToFramesPerRow[level]
         
         generateNextTetromino()
         generateNextTetromino()
+    }
+    
+    func changeStartLevel() {
+        if (!inProgress) {
+            if (startLevel < 6) {
+                startLevel = 6
+            } else if (startLevel < 16) {
+                startLevel += 2
+            } else {
+                startLevel = 0
+            }
+            
+            if (level < startLevel || isGameOver) {
+                level = startLevel
+            }
+        }
     }
     
     func run() {
@@ -226,12 +248,16 @@ class GameModel : ObservableObject {
         reset()
 
         inProgress = true
+        isGameOver = false
         
         onRun()
     }
     
     func stop() {
         inProgress = false
+        isGameOver = true
+        
+        onGameOver()
     }
     
     func pause() {
@@ -275,8 +301,6 @@ class GameModel : ObservableObject {
                 
                 if (gameOver()) {
                     stop()
-
-                    onGameOver()
                 } else {
                     score += softDropRows
 

@@ -263,6 +263,15 @@ struct GameView: View {
                                 Path(CGRect(x: 0, y: 0, width: 100, height: 60))
                                     .stroke(Color(Theme.border), lineWidth: 3)
                                 
+                                if (model.startLevel > 0) {
+                                    Text("\(model.startLevel)")
+                                        .font(smallFont)
+                                        .foregroundColor(Color(Theme.textSecond))
+                                        .padding(.trailing)
+                                        .frame(width: 100, alignment: .trailing)
+                                        .position(x: 50, y: 43)
+                                }
+                                
                                 Text("LEVEL\n\(model.level)")
                                     .font(mainFont)
                                     .foregroundColor(Color(Theme.text))

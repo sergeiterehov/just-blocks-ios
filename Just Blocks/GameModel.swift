@@ -225,18 +225,12 @@ class GameModel : ObservableObject {
     }
     
     func changeStartLevel() {
-        if (!inProgress) {
-            if (startLevel < 6) {
-                startLevel = 6
-            } else if (startLevel < 16) {
-                startLevel += 2
-            } else {
-                startLevel = 0
-            }
-            
-            if (level < startLevel || isGameOver) {
-                level = startLevel
-            }
+        if (startLevel < 6) {
+            startLevel = 6
+        } else if (startLevel < 16) {
+            startLevel += 2
+        } else {
+            startLevel = 0
         }
     }
     

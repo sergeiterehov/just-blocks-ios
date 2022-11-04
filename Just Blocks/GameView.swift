@@ -25,9 +25,9 @@ struct GameView: View {
     @AppStorage("achievementLevel18") private var achievementLevel18 = false
     
     init() {
-        // Configuring the audio session that does not stop other music
+        // Configuring the audio session that does not stop other music and off when muted
         do {
-            try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+            try AVAudioSession.sharedInstance().setCategory(.ambient, options: .mixWithOthers)
             try AVAudioSession.sharedInstance().setActive(true)
         } catch { print(error.localizedDescription) }
 
@@ -355,7 +355,8 @@ struct GameView: View {
                             onTap: {
                                 model.move(dx: -1)
                             },
-                            extraSmallScreen: extraSmallScreen
+                            extraSmallScreen: extraSmallScreen,
+                            enableDas: true
                         )
                             .position(x: -arrowButtonsSpace, y: 0)
                         
@@ -364,7 +365,8 @@ struct GameView: View {
                             onTap: {
                                 model.move(dx: 1)
                             },
-                            extraSmallScreen: extraSmallScreen
+                            extraSmallScreen: extraSmallScreen,
+                            enableDas: true
                         )
                             .position(x: arrowButtonsSpace, y: 0)
                         
@@ -416,6 +418,46 @@ struct GameView: View {
     }
 }
 
+class DASModel : ObservableObject {
+    private var enabled = false
+    private var counter = 0
+    private var clock: Timer?
+
+    var handler = {}
+
+    init() {
+        self.clock = Timer.scheduledTimer(
+            withTimeInterval: 1.0 / 60,
+            repeats: true
+        ) { timer in self.tick()}
+    }
+    
+    public func begin() {
+        counter = 16
+        enabled = true
+        
+        handler()
+    }
+    
+    public func end() {
+        enabled = false
+    }
+    
+    private func tick() {
+        if (!enabled) {
+            return
+        }
+        
+        counter -= 1
+
+        if (counter == 0) {
+            handler()
+
+            counter = 6
+        }
+    }
+}
+
 struct ControlButtonView : View {
     var icon = "arrow.left"
     var onTap = {}
@@ -423,7 +465,9 @@ struct ControlButtonView : View {
     var color = Color(Theme.textSecond)
     var padding = 30.0
     var extraSmallScreen = false
+    var enableDas = false
     
+    @State private var das = DASModel()
     @State private var pressed = false
 
     var body: some View {
@@ -438,10 +482,18 @@ struct ControlButtonView : View {
                 ).onChanged { _ in
                     if (!pressed) {
                         pressed = true
-                        onTap()
+
+                        if (enableDas) {
+                            das.handler = onTap
+                            das.begin()
+                        } else {
+                            onTap()
+                        }
                     }
                 }.onEnded { _ in
                     pressed = false
+
+                    das.end()
                     onUntap()
                 }
             )

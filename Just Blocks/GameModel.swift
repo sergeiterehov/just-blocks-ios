@@ -155,7 +155,7 @@ class GameModel : ObservableObject {
     let fps = 60.0 // NTSC
     let softDropFramesPerRow = 1 // 1G (1 frame). Classic is 1/2G (2 frame)
     
-    var clock: Timer?;
+    var clock: Timer?
     
     @Published var startLevel = 0
     
@@ -171,7 +171,7 @@ class GameModel : ObservableObject {
     
     @Published var isGameOver = false
     
-    var softDropRows = 0;
+    var softDropRows = 0
 
     @Published var current = Tetromino.S
     @Published var next = Tetromino.T

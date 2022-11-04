@@ -152,7 +152,8 @@ let levelToFramesPerRow: [Int] = [
 class GameModel : ObservableObject {
     let width = 10
     let height = 20
-    let fps = 50.0
+    let fps = 60.0 // NTSC
+    let softDropFramesPerRow = 1 // 1G (1 frame). Classic is 1/2G (2 frame)
     
     var clock: Timer?;
     
@@ -189,6 +190,8 @@ class GameModel : ObservableObject {
     var onTetris = {}
     
     var framesToDrop = 0
+    var framesToSoftDrop = 0
+    var framesToEntry = 0
     
     init() {
         reset()
@@ -219,6 +222,7 @@ class GameModel : ObservableObject {
         inProgress = false
         isGameOver = true
         framesToDrop = levelToFramesPerRow[level]
+        framesToSoftDrop = 0
         
         generateNextTetromino()
         generateNextTetromino()
@@ -289,19 +293,30 @@ class GameModel : ObservableObject {
             return
         }
         
-        if (softDrop || framesToDrop <= 1) {
+        if (framesToEntry > 1 && !softDrop) {
+            framesToEntry -= 1
+            
+            return
+        }
+        
+        if (softDrop ? framesToSoftDrop <= 1 : framesToDrop <= 1) {
             if (fell()) {
                 fix()
                 
                 if (gameOver()) {
                     stop()
                 } else {
+                    // Classic version ARE (entry delay) is here
+
                     score += softDropRows
 
                     clearLines()
                     generateNextTetromino()
 
                     onDrop()
+                    
+                    // Classic is 10 + Int(height / 4) * 2
+                    framesToEntry = 6 + (getHeight() / 3) * 2
                 }
                 
                 softDrop = false
@@ -327,7 +342,9 @@ class GameModel : ObservableObject {
             // Continue...
             
             framesToDrop = levelToFramesPerRow[level]
+            framesToSoftDrop = softDropFramesPerRow
         } else {
+            framesToSoftDrop -= 1
             framesToDrop -= 1
         }
     }

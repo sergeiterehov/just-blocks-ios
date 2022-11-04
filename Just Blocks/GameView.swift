@@ -1,4 +1,5 @@
 import SwiftUI
+import AVFoundation
 
 let debugAchievementsView = false
 
@@ -24,6 +25,12 @@ struct GameView: View {
     @AppStorage("achievementLevel18") private var achievementLevel18 = false
     
     init() {
+        // Configuring the audio session that does not stop other music
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, options: .mixWithOthers)
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch { print(error.localizedDescription) }
+
         model.onRun = { [self] in
             // reset local state
             state.gameApprovedForCounter = false

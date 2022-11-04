@@ -24,6 +24,8 @@ struct GameView: View {
     @AppStorage("achievementGames1000") private var achievementGames1000 = false
     @AppStorage("achievementLevel18") private var achievementLevel18 = false
     
+    @State var avoidTopOfScreen = false
+    
     init() {
         // Configuring the audio session that does not stop other music and off when muted
         do {
@@ -129,6 +131,10 @@ struct GameView: View {
             let smallScreen = geometry.size.height < 730
             let extraSmallScreen = geometry.size.width < 370
             
+            let topOffset = avoidTopOfScreen
+                ? max(5, geometry.size.height - (smallScreen ? 150 : 250) - 540)
+                : 0
+            
             let arrowButtonsSpace = extraSmallScreen ? 50.0 : 60.0
 
             Color(Theme.background).ignoresSafeArea()
@@ -153,6 +159,16 @@ struct GameView: View {
                                         .onTapGesture {
                                             displayDotsField = !displayDotsField
                                         }
+                                        .gesture(
+                                            DragGesture()
+                                                .onChanged { gesture in
+                                                    if (gesture.translation.height > 100) {
+                                                        avoidTopOfScreen = true
+                                                    } else if (gesture.translation.height < -100) {
+                                                        avoidTopOfScreen = false
+                                                    }
+                                                }
+                                        )
                                     
                                     ZStack {
                                         ForEach(0..<model.height * model.width, id: \.self) { index in
@@ -297,6 +313,7 @@ struct GameView: View {
                     }
                 }
                     .frame(maxWidth: 440)
+                    .offset(y: topOffset)
                 
                 DesignTetrominosView(palletteIndex: palletteIndex)
                     .offset(
@@ -426,10 +443,17 @@ class DASModel : ObservableObject {
     var handler = {}
 
     init() {
-        self.clock = Timer.scheduledTimer(
+        clock = Timer.scheduledTimer(
             withTimeInterval: 1.0 / 60,
             repeats: true
         ) { timer in self.tick()}
+        
+        print(1)
+    }
+    
+    deinit {
+        clock?.invalidate()
+        print(2)
     }
     
     public func begin() {
@@ -467,7 +491,7 @@ struct ControlButtonView : View {
     var extraSmallScreen = false
     var enableDas = false
     
-    @State private var das = DASModel()
+    @StateObject private var das = DASModel()
     @State private var pressed = false
 
     var body: some View {

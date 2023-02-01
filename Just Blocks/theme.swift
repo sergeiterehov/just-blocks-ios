@@ -31,7 +31,8 @@ struct Theme {
 
     static let background = getColor(r: 25, g: 34, b: 40)
     static let border = getColor(r:255, g: 255, b: 255, a: 0.1)
-
+    static let highlightedColor = getColor(r:255, g: 255, b: 255, a: 0.3)
+    
     static let text = getColor(r: 255, g: 255, b: 255)
     static let textSecond = getColor(r: 124, g: 137, b: 171)
     static let textThird = getColor(r: 124, g: 137, b: 171, a: 0.5)

@@ -493,34 +493,44 @@ struct ControlButtonView : View {
     
     @StateObject private var das = DASModel()
     @State private var pressed = false
-
+    @Environment(\.scenePhase) var scenePhase
+    @GestureState var isDetectingLongPress = false
+    
     var body: some View {
+        let press = DragGesture(
+            minimumDistance: 0,
+            coordinateSpace: .local
+        )
+            .updating($isDetectingLongPress) { _, state, _ in
+                state = true
+            }.onChanged { _ in
+                if (!pressed) {
+                    pressed = true
+                    
+                    if (enableDas) {
+                        das.handler = onTap
+                        das.begin()
+                    } else {
+                        onTap()
+                    }
+                }
+            }.onEnded { _ in
+                pressed = false
+                das.end()
+                onUntap()
+            }
+        
         Image(systemName: icon)
             .padding(extraSmallScreen ? 24 : self.padding)
-            .foregroundColor(color)
-            .background(Circle().fill(Color(Theme.border)))
-            .gesture(
-                DragGesture(
-                    minimumDistance: 0,
-                    coordinateSpace: .local
-                ).onChanged { _ in
-                    if (!pressed) {
-                        pressed = true
-
-                        if (enableDas) {
-                            das.handler = onTap
-                            das.begin()
-                        } else {
-                            onTap()
-                        }
-                    }
-                }.onEnded { _ in
-                    pressed = false
-
+            .foregroundColor(isDetectingLongPress ? .white : color)
+            .background(Circle().fill(Color(isDetectingLongPress ? Theme.highlightedColor : Theme.border)))
+            .gesture(press)
+            .onChange(of: scenePhase) { newPhase in
+                if newPhase == .inactive || newPhase == .background {
                     das.end()
                     onUntap()
                 }
-            )
+            }
     }
 }
 

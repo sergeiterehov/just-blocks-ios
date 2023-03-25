@@ -492,7 +492,6 @@ struct ControlButtonView : View {
     var enableDas = false
     
     @StateObject private var das = DASModel()
-    @State private var pressed = false
     @Environment(\.scenePhase) var scenePhase
     @State var isDetectingLongPress = false
     
@@ -508,18 +507,13 @@ struct ControlButtonView : View {
                 onPressingChanged: { isPressing in
                     isDetectingLongPress = isPressing
                     if isPressing {
-                        if (!pressed) {
-                            pressed = true
-                            
-                            if (enableDas) {
-                                das.handler = onTap
-                                das.begin()
-                            } else {
-                                onTap()
-                            }
+                        if (enableDas) {
+                            das.handler = onTap
+                            das.begin()
+                        } else {
+                            onTap()
                         }
                     } else {
-                        pressed = false
                         das.end()
                         onUntap()
                     }

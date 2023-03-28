@@ -154,6 +154,7 @@ class GameModel : ObservableObject {
     let height = 20
     let fps = 60.0 // NTSC
     let softDropFramesPerRow = 1 // 1G (1 frame). Classic is 1/2G (2 frame)
+    let clearAnimationFrames = 20
     
     var clock: Timer?
     
@@ -186,12 +187,13 @@ class GameModel : ObservableObject {
     var onDrop = {}
     var onGameOver = {}
     var onLevelUp = {}
-    var onClear = {}
-    var onTetris = {}
+    var onClear = { (y: Int, lines: Int) in }
+    var onTetris = { (y: Int, lines: Int) in }
     
     var framesToDrop = 0
     var framesToSoftDrop = 0
     var framesToEntry = 0
+    var framesToClean = 0
     
     init() {
         reset()
@@ -223,6 +225,7 @@ class GameModel : ObservableObject {
         isGameOver = true
         framesToDrop = levelToFramesPerRow[level]
         framesToSoftDrop = 0
+        framesToClean = 0
         
         generateNextTetromino()
         generateNextTetromino()
@@ -293,7 +296,21 @@ class GameModel : ObservableObject {
             return
         }
         
-        if (framesToEntry > 1 && !softDrop) {
+        if (framesToClean > 0) {
+            framesToClean -= 1
+            
+            if (framesToClean == 0) {
+                clearLines()
+                generateNextTetromino()
+                
+                // Classic is 10 + Int(height / 4) * 2
+                framesToEntry = 6 + (getHeight() / 3) * 2
+            }
+            
+            return
+        }
+        
+        if (framesToEntry > 0 && !softDrop) {
             framesToEntry -= 1
             
             return
@@ -309,14 +326,22 @@ class GameModel : ObservableObject {
                     // Classic version ARE (entry delay) is here
 
                     score += softDropRows
-
-                    clearLines()
-                    generateNextTetromino()
-
+                    
                     onDrop()
                     
-                    // Classic is 10 + Int(height / 4) * 2
-                    framesToEntry = 6 + (getHeight() / 3) * 2
+                    let (cleared, top) = testCleaner()
+                    
+                    if (cleared > 0) {
+                        if (cleared >= 4) {
+                            onTetris(top, cleared)
+                        } else {
+                            onClear(top, cleared)
+                        }
+                        
+                        framesToClean = clearAnimationFrames
+                    } else {
+                        framesToClean = 1
+                    }
                 }
                 
                 softDrop = false
@@ -439,6 +464,34 @@ class GameModel : ObservableObject {
         }
     }
     
+    private func testCleaner() -> (Int, Int) {
+        var top = height
+        var cleared = 0
+
+        for y in 0..<height {
+            var filled = true
+            
+            for x in 0..<width {
+                if (field[y * width + x] == .Empty) {
+                    filled = false
+                    break
+                }
+            }
+            
+            if (!filled) {
+                continue
+            }
+            
+            cleared += 1
+            
+            if (y < top) {
+                top = y
+            }
+        }
+        
+        return (cleared, top)
+    }
+    
     private func clearLines() {
         var cleared = 0
 
@@ -472,23 +525,15 @@ class GameModel : ObservableObject {
         lines += cleared
         
         if (cleared == 0) {
-          // nop
+            // nop
         } else if (cleared == 1) {
-          score += 40 * (level + 1)
-            
-          onClear()
+            score += 40 * (level + 1)
         } else if (cleared == 2) {
-          score += 100 * (level + 1)
-            
-            onClear()
+            score += 100 * (level + 1)
         } else if (cleared == 3) {
-          score += 300 * (level + 1)
-            
-            onClear()
+            score += 300 * (level + 1)
         } else if (cleared >= 4) {
-          score += 1200 * (level + 1)
-            
-            onTetris()
+            score += 1200 * (level + 1)
         }
     }
     

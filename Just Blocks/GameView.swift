@@ -52,14 +52,16 @@ struct GameView: View {
             
             dropSound.play()
         }
-        model.onClear = { [self] in
+        model.onClear = { [self] (y, lines) in
             UINotificationFeedbackGenerator().notificationOccurred(.success)
             
             state.gameApprovedForCounter = true
             
             clearSound.play()
+            
+            // TODO: clear animation
         }
-        model.onTetris = { [self] in
+        model.onTetris = { [self] (y, lines) in
             UINotificationFeedbackGenerator().notificationOccurred(.error)
             
             state.gameApprovedForCounter = true
@@ -70,6 +72,8 @@ struct GameView: View {
             }
 
             tetrisSound.play()
+            
+            // TODO: clear animation
         }
         model.onLevelUp = { [self] in
             if (model.level > model.startLevel) {
@@ -431,138 +435,6 @@ struct GameView: View {
             if newPhase == .inactive {
                 model.pause()
             }
-        }
-    }
-}
-
-class DASModel : ObservableObject {
-    private var enabled = false
-    private var counter = 0
-    private var clock: Timer?
-
-    var handler = {}
-
-    init() {
-        clock = Timer.scheduledTimer(
-            withTimeInterval: 1.0 / 60,
-            repeats: true
-        ) { timer in self.tick()}
-        
-        print(1)
-    }
-    
-    deinit {
-        clock?.invalidate()
-        print(2)
-    }
-    
-    public func begin() {
-        counter = 16
-        enabled = true
-        
-        handler()
-    }
-    
-    public func end() {
-        enabled = false
-    }
-    
-    private func tick() {
-        if (!enabled) {
-            return
-        }
-        
-        counter -= 1
-
-        if (counter == 0) {
-            handler()
-
-            counter = 6
-        }
-    }
-}
-
-struct ControlButtonView : View {
-    var icon = "arrow.left"
-    var onTap = {}
-    var onUntap = {}
-    var color = Color(Theme.textSecond)
-    var padding = 30.0
-    var extraSmallScreen = false
-    var enableDas = false
-    
-    @StateObject private var das = DASModel()
-    @Environment(\.scenePhase) var scenePhase
-    @State var isDetectingLongPress = false
-    
-    var body: some View {
-        
-        Image(systemName: icon)
-            .padding(extraSmallScreen ? 24 : self.padding)
-            .foregroundColor(isDetectingLongPress ? .white : color)
-            .background(Circle().fill(Color(isDetectingLongPress ? Theme.highlightedColor : Theme.border)))
-            .onLongPressGesture(
-                minimumDuration: .infinity,
-                perform: {},
-                onPressingChanged: { isPressing in
-                    isDetectingLongPress = isPressing
-                    if isPressing {
-                        if (enableDas) {
-                            das.handler = onTap
-                            das.begin()
-                        } else {
-                            onTap()
-                        }
-                    } else {
-                        das.end()
-                        onUntap()
-                    }
-                })
-            .onChange(of: scenePhase) { newPhase in
-                if newPhase == .inactive || newPhase == .background {
-                    das.end()
-                    onUntap()
-                }
-            }
-    }
-}
-
-struct DesignTetrominosView : View {
-    var palletteIndex = 0
-
-    var body: some View {
-        ZStack {
-            TetrominoView(tetromino: Tetromino.S, palletteIndex: palletteIndex)
-                .frame(width: 80, height: 80)
-                .scaleEffect(2)
-                .rotationEffect(Angle(degrees: 10))
-                .position(x: 280, y: 40)
-            TetrominoView(tetromino: Tetromino.L, palletteIndex: palletteIndex)
-                .frame(width: 80, height: 80)
-                .scaleEffect(1.2)
-                .rotationEffect(Angle(degrees: -10))
-                .position(x: 270, y: 120)
-                .opacity(0.8)
-            TetrominoView(tetromino: Tetromino.T, palletteIndex: palletteIndex)
-                .frame(width: 80, height: 80)
-                .scaleEffect(1)
-                .rotationEffect(Angle(degrees: 20))
-                .position(x: 180, y: 110)
-                .opacity(0.7)
-            TetrominoView(tetromino: Tetromino.J, palletteIndex: palletteIndex)
-                .frame(width: 80, height: 80)
-                .scaleEffect(0.6)
-                .rotationEffect(Angle(degrees: -5))
-                .position(x: 120, y: 110)
-                .opacity(0.7)
-                .blur(radius: 2)
-            TetrominoView(tetromino: Tetromino.I, rotation: 1, palletteIndex: palletteIndex)
-                .frame(width: 80, height: 80)
-                .scaleEffect(0.5)
-                .rotationEffect(Angle(degrees: 10))
-                .position(x: 65, y: 135)
-                .opacity(0.5)
-                .blur(radius: 3)
         }
     }
 }

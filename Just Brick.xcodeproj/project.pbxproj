@@ -12,6 +12,8 @@
 		8D77ABBA28FF4E59002E6BC3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D77ABB928FF4E59002E6BC3 /* Assets.xcassets */; };
 		8D77ABBD28FF4E59002E6BC3 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D77ABBC28FF4E59002E6BC3 /* Preview Assets.xcassets */; };
 		8D77ABC428FF54B0002E6BC3 /* GameModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D77ABC328FF54B0002E6BC3 /* GameModel.swift */; };
+		8DA53E6329D2C6FD000AD766 /* ControlButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA53E6229D2C6FD000AD766 /* ControlButtonView.swift */; };
+		8DA53E6529D2C74C000AD766 /* DesignTetrominosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DA53E6429D2C74C000AD766 /* DesignTetrominosView.swift */; };
 		8DC039C929056AAF00EB11F9 /* GuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC039C829056AAF00EB11F9 /* GuideView.swift */; };
 		8DC039CB29056B0300EB11F9 /* theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC039CA29056B0300EB11F9 /* theme.swift */; };
 		8DC039CD29056B5100EB11F9 /* TetrominoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC039CC29056B5100EB11F9 /* TetrominoView.swift */; };
@@ -33,6 +35,8 @@
 		8D77ABB928FF4E59002E6BC3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D77ABBC28FF4E59002E6BC3 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		8D77ABC328FF54B0002E6BC3 /* GameModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameModel.swift; sourceTree = "<group>"; };
+		8DA53E6229D2C6FD000AD766 /* ControlButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlButtonView.swift; sourceTree = "<group>"; };
+		8DA53E6429D2C74C000AD766 /* DesignTetrominosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignTetrominosView.swift; sourceTree = "<group>"; };
 		8DC039C829056AAF00EB11F9 /* GuideView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuideView.swift; sourceTree = "<group>"; };
 		8DC039CA29056B0300EB11F9 /* theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = theme.swift; sourceTree = "<group>"; };
 		8DC039CC29056B5100EB11F9 /* TetrominoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TetrominoView.swift; sourceTree = "<group>"; };
@@ -87,6 +91,8 @@
 				8DC039CA29056B0300EB11F9 /* theme.swift */,
 				8DC039CC29056B5100EB11F9 /* TetrominoView.swift */,
 				8DC039CE2905875700EB11F9 /* MainView.swift */,
+				8DA53E6229D2C6FD000AD766 /* ControlButtonView.swift */,
+				8DA53E6429D2C74C000AD766 /* DesignTetrominosView.swift */,
 			);
 			path = "Just Blocks";
 			sourceTree = "<group>";
@@ -192,8 +198,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8DA53E6529D2C74C000AD766 /* DesignTetrominosView.swift in Sources */,
 				8DC039CD29056B5100EB11F9 /* TetrominoView.swift in Sources */,
 				8DC039CF2905875700EB11F9 /* MainView.swift in Sources */,
+				8DA53E6329D2C6FD000AD766 /* ControlButtonView.swift in Sources */,
 				8D77ABB828FF4E58002E6BC3 /* GameView.swift in Sources */,
 				8D77ABB628FF4E58002E6BC3 /* Just_BlocksApp.swift in Sources */,
 				8DC039CB29056B0300EB11F9 /* theme.swift in Sources */,

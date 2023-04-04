@@ -72,10 +72,9 @@ struct HUDView: View {
                 }
                 
                 (
-                    Text("LEVEL\n")
-                    + Text("\(model.level)")
-                    + Text(" ").font(Font.system(size: 8).monospaced())
-                    + Text("\(model.lines % 10)").font(smallFont).foregroundColor(Color(Theme.textSecond))
+                    Text("LINES\n")
+                    + Text("\(Int(model.lines / 10))")
+                    + Text("\(model.lines % 10)").foregroundColor(Color(Theme.textSecond))
                 )
                     .font(mainFont)
                     .foregroundColor(Color(Theme.text))
@@ -85,6 +84,10 @@ struct HUDView: View {
             }
                 .offset(x: 0, y: 80)
                 .onTapGesture {
+                    if (!model.isGameOver) {
+                        return
+                    }
+
                     UIImpactFeedbackGenerator(style: .heavy).impactOccurred()
                     
                     model.changeStartLevel()

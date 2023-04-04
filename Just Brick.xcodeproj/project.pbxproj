@@ -30,6 +30,7 @@
 		8DDB0AF329DC2E7600114FCB /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDB0AF229DC2E7600114FCB /* GameState.swift */; };
 		8DDB0AF529DC31E700114FCB /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDB0AF429DC31E700114FCB /* AchievementsView.swift */; };
 		8DDB0AF729DC337F00114FCB /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDB0AF629DC337F00114FCB /* KeyboardView.swift */; };
+		8DDB0AF929DC3E0A00114FCB /* MotionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDB0AF829DC3E0A00114FCB /* MotionManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,7 @@
 		8DDB0AF229DC2E7600114FCB /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
 		8DDB0AF429DC31E700114FCB /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
 		8DDB0AF629DC337F00114FCB /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
+		8DDB0AF829DC3E0A00114FCB /* MotionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +107,7 @@
 				8DDB0AF229DC2E7600114FCB /* GameState.swift */,
 				8DDB0AF429DC31E700114FCB /* AchievementsView.swift */,
 				8DDB0AF629DC337F00114FCB /* KeyboardView.swift */,
+				8DDB0AF829DC3E0A00114FCB /* MotionManager.swift */,
 			);
 			path = "Just Blocks";
 			sourceTree = "<group>";
@@ -211,6 +214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DA53E6529D2C74C000AD766 /* DesignTetrominosView.swift in Sources */,
+				8DDB0AF929DC3E0A00114FCB /* MotionManager.swift in Sources */,
 				8DDB0AF729DC337F00114FCB /* KeyboardView.swift in Sources */,
 				8DC039CD29056B5100EB11F9 /* TetrominoView.swift in Sources */,
 				8DC039CF2905875700EB11F9 /* MainView.swift in Sources */,

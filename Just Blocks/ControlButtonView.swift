@@ -12,13 +12,10 @@ class DASModel : ObservableObject {
             withTimeInterval: 1.0 / 60,
             repeats: true
         ) { timer in self.tick()}
-        
-        print(1)
     }
     
     deinit {
         clock?.invalidate()
-        print(2)
     }
     
     public func begin() {
@@ -55,22 +52,32 @@ struct ControlButtonView : View {
     var padding = 30.0
     var extraSmallScreen = false
     var enableDas = false
+    var disabled = false
     
     @StateObject private var das = DASModel()
     @Environment(\.scenePhase) var scenePhase
-    @State var isDetectingLongPress = false
+    @State var isPressing = false
     
     var body: some View {
         
         Image(systemName: icon)
             .padding(extraSmallScreen ? 24 : self.padding)
-            .foregroundColor(isDetectingLongPress ? .white : color)
-            .background(Circle().fill(Color(isDetectingLongPress ? Theme.highlightedColor : Theme.border)))
+            .foregroundColor(isPressing ? Color(Theme.text) : color)
+            .background(Circle().fill(Color(isPressing ? Theme.highlightedColor : Theme.border)))
+            .opacity(disabled ? 0.4 : 1)
+            .animation(.easeOut(duration: 0.1), value: isPressing)
             .onLongPressGesture(
                 minimumDuration: .infinity,
                 perform: {},
                 onPressingChanged: { isPressing in
-                    isDetectingLongPress = isPressing
+                    if (disabled) {
+                        self.isPressing = false
+
+                        return
+                    }
+
+                    self.isPressing = isPressing
+
                     if isPressing {
                         if (enableDas) {
                             das.handler = onTap

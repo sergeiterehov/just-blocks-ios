@@ -27,6 +27,9 @@
 		8DC039FB290735C100EB11F9 /* tetris.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039F4290735C100EB11F9 /* tetris.mp3 */; };
 		8DC039FD290D53E500EB11F9 /* achievement.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039FC290D53E500EB11F9 /* achievement.mp3 */; };
 		8DDB0AF129DBFBB200114FCB /* HUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDB0AF029DBFBB200114FCB /* HUDView.swift */; };
+		8DDB0AF329DC2E7600114FCB /* GameState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDB0AF229DC2E7600114FCB /* GameState.swift */; };
+		8DDB0AF529DC31E700114FCB /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDB0AF429DC31E700114FCB /* AchievementsView.swift */; };
+		8DDB0AF729DC337F00114FCB /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDB0AF629DC337F00114FCB /* KeyboardView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +54,9 @@
 		8DC039F4290735C100EB11F9 /* tetris.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tetris.mp3; sourceTree = "<group>"; };
 		8DC039FC290D53E500EB11F9 /* achievement.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = achievement.mp3; sourceTree = "<group>"; };
 		8DDB0AF029DBFBB200114FCB /* HUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDView.swift; sourceTree = "<group>"; };
+		8DDB0AF229DC2E7600114FCB /* GameState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameState.swift; sourceTree = "<group>"; };
+		8DDB0AF429DC31E700114FCB /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
+		8DDB0AF629DC337F00114FCB /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +102,9 @@
 				8DA53E6229D2C6FD000AD766 /* ControlButtonView.swift */,
 				8DA53E6429D2C74C000AD766 /* DesignTetrominosView.swift */,
 				8DDB0AF029DBFBB200114FCB /* HUDView.swift */,
+				8DDB0AF229DC2E7600114FCB /* GameState.swift */,
+				8DDB0AF429DC31E700114FCB /* AchievementsView.swift */,
+				8DDB0AF629DC337F00114FCB /* KeyboardView.swift */,
 			);
 			path = "Just Blocks";
 			sourceTree = "<group>";
@@ -202,15 +211,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DA53E6529D2C74C000AD766 /* DesignTetrominosView.swift in Sources */,
+				8DDB0AF729DC337F00114FCB /* KeyboardView.swift in Sources */,
 				8DC039CD29056B5100EB11F9 /* TetrominoView.swift in Sources */,
 				8DC039CF2905875700EB11F9 /* MainView.swift in Sources */,
 				8DA53E6329D2C6FD000AD766 /* ControlButtonView.swift in Sources */,
+				8DDB0AF529DC31E700114FCB /* AchievementsView.swift in Sources */,
 				8D77ABB828FF4E58002E6BC3 /* GameView.swift in Sources */,
 				8D77ABB628FF4E58002E6BC3 /* Just_BlocksApp.swift in Sources */,
 				8DC039CB29056B0300EB11F9 /* theme.swift in Sources */,
 				8D77ABC428FF54B0002E6BC3 /* GameModel.swift in Sources */,
 				8DDB0AF129DBFBB200114FCB /* HUDView.swift in Sources */,
 				8DC039C929056AAF00EB11F9 /* GuideView.swift in Sources */,
+				8DDB0AF329DC2E7600114FCB /* GameState.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

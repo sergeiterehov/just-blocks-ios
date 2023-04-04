@@ -1,28 +1,31 @@
 import SwiftUI
 import AVFoundation
 
-let debugAchievementsView = false
+enum ScreenSize {
+    case Normal
+    case Small
+    case ExtraSmall
+}
 
-class GameState : ObservableObject {
-    @Published var gameApprovedForCounter = false
+var screenSize = ScreenSize.Normal
+
+func updateScreenSize(size: CGSize) -> ScreenSize {
+    if (size.height < 730) {
+        screenSize = .Small
+    } else if (size.width < 370) {
+        screenSize = .ExtraSmall
+    } else {
+        screenSize = .Normal
+    }
+    
+    return screenSize
 }
 
 struct GameView: View {
     @Environment(\.scenePhase) var scenePhase
 
     @ObservedObject private var model = GameModel()
-    @ObservedObject private var state = GameState()
-    
-    @AppStorage("displayDotsField") private var displayDotsField = false
-    
-    @AppStorage("maxScore") private var maxScore = 0
-    @AppStorage("gamesCounter") private var gamesCounter = 0
-    
-    @AppStorage("achievementTetris") private var achievementTetris = false
-    @AppStorage("achievementLevel10") private var achievementLevel10 = false
-    @AppStorage("achievement100000") private var achievement100000 = false
-    @AppStorage("achievementGames1000") private var achievementGames1000 = false
-    @AppStorage("achievementLevel18") private var achievementLevel18 = false
+    @ObservedObject private var state = globalGameState
     
     @State var avoidTopOfScreen = false
     
@@ -66,8 +69,8 @@ struct GameView: View {
             
             state.gameApprovedForCounter = true
             
-            if (!achievementTetris) {
-                achievementTetris = true
+            if (!state.achievementTetris) {
+                state.achievementTetris = true
                 achievementSound.play()
             }
 
@@ -77,13 +80,13 @@ struct GameView: View {
         }
         model.onLevelUp = { [self] in
             if (model.level > model.startLevel) {
-                if (!achievementLevel10 && model.level == 10) {
-                    achievementLevel10 = true
+                if (!state.achievementLevel10 && model.level == 10) {
+                    state.achievementLevel10 = true
                     achievementSound.play()
                 }
                 
-                if (!achievementLevel18 && model.level == 18) {
-                    achievementLevel18 = true
+                if (!state.achievementLevel18 && model.level == 18) {
+                    state.achievementLevel18 = true
                     achievementSound.play()
                 }
             }
@@ -94,20 +97,20 @@ struct GameView: View {
             UINotificationFeedbackGenerator().notificationOccurred(.warning)
             
             if (state.gameApprovedForCounter) {
-                gamesCounter += 1
+                state.gamesCounter += 1
             }
             
-            if (model.score > maxScore) {
-                maxScore = model.score
+            if (model.score > state.maxScore) {
+                state.maxScore = model.score
             }
             
-            if (!achievement100000 && model.score >= 100000) {
-                achievement100000 = true
+            if (!state.achievement100000 && model.score >= 100000) {
+                state.achievement100000 = true
                 achievementSound.play()
             }
             
-            if (!achievementGames1000 && gamesCounter >= 1000) {
-                achievementGames1000 = true
+            if (!state.achievementGames1000 && state.gamesCounter >= 1000) {
+                state.achievementGames1000 = true
                 achievementSound.play()
             }
             
@@ -132,14 +135,12 @@ struct GameView: View {
         let palletteIndex = model.level % pallettes.count
 
         GeometryReader { geometry in
-            let smallScreen = geometry.size.height < 730
-            let extraSmallScreen = geometry.size.width < 370
-            
+            // TODO: should use environment?
+            let _ = updateScreenSize(size: geometry.size)
+
             let topOffset = avoidTopOfScreen
-                ? max(5, geometry.size.height - (smallScreen ? 150 : 250) - 540)
-                : 0
-            
-            let arrowButtonsSpace = extraSmallScreen ? 50.0 : 60.0
+            ? max(5, geometry.size.height - (screenSize == .Small ? 150 : 250) - 540)
+            : 0
 
             Color(Theme.background).ignoresSafeArea()
 
@@ -161,7 +162,7 @@ struct GameView: View {
                                     Path()
                                         .background(Color(Theme.background))
                                         .onTapGesture {
-                                            displayDotsField = !displayDotsField
+                                            state.displayDotsField = !state.displayDotsField
                                         }
                                         .gesture(
                                             DragGesture()
@@ -182,7 +183,7 @@ struct GameView: View {
                                             BlockView(
                                                 block: model.field[index],
                                                 palletteIndex: palletteIndex,
-                                                dot: displayDotsField
+                                                dot: state.displayDotsField
                                             )
                                             .offset(x: CGFloat(x * blockSize), y: CGFloat(y * blockSize))
                                         }
@@ -204,7 +205,7 @@ struct GameView: View {
                                             .font(mainFont)
                                             .foregroundColor(Color(Theme.text))
                                             .multilineTextAlignment(.center)
-                                        Text("GAMES \(gamesCounter)")
+                                        Text("GAMES \(state.gamesCounter)")
                                             .font(smallFont)
                                             .foregroundColor(Color(Theme.text))
                                             .multilineTextAlignment(.center)
@@ -220,7 +221,7 @@ struct GameView: View {
                             .position(x: 100, y: 200)
                             .offset(x: 26, y: 26)
                         
-                        HUDView(model: model, maxScore: maxScore, inProgressColor: inProgressColor, palletteIndex: palletteIndex)
+                        HUDView(model: model, maxScore: state.maxScore, inProgressColor: inProgressColor, palletteIndex: palletteIndex)
                             .offset(x: topGeometry.size.width - 100 - 23, y: 20)
                     }
                 }
@@ -229,114 +230,20 @@ struct GameView: View {
                 
                 DesignTetrominosView(palletteIndex: palletteIndex)
                     .offset(
-                        x: geometry.size.width - (smallScreen ? 260 : 300),
+                        x: geometry.size.width - (screenSize == .Small ? 260 : 300),
                         y: geometry.size.height - 120
                     )
                     .opacity(0.7)
                 
-                ZStack {
-                    if (achievementTetris || debugAchievementsView) {
-                        TetrominoView(tetromino: Tetromino.I, palletteIndex: 3)
-                            .frame(width: 80, height: 80)
-                            .rotationEffect(Angle(degrees: 10))
-                            .scaleEffect(0.3)
-                            .position(x: 40, y: 40)
-                    }
-                    if (achievementLevel10 || debugAchievementsView) {
-                        TetrominoView(tetromino: Tetromino.S, palletteIndex: 3)
-                            .frame(width: 80, height: 80)
-                            .rotationEffect(Angle(degrees: -5))
-                            .scaleEffect(0.3)
-                            .position(x: 40, y: 65)
-                    }
-                    if (achievement100000 || debugAchievementsView) {
-                        TetrominoView(tetromino: Tetromino.L, palletteIndex: 3)
-                            .frame(width: 80, height: 80)
-                            .rotationEffect(Angle(degrees: -10))
-                            .scaleEffect(0.3)
-                            .position(x: 40, y: 90)
-                    }
-                    if (achievementGames1000 || debugAchievementsView) {
-                        TetrominoView(tetromino: Tetromino.O, palletteIndex: 3)
-                            .frame(width: 80, height: 80)
-                            .rotationEffect(Angle(degrees: 10))
-                            .scaleEffect(0.3)
-                            .position(x: 65, y: 90)
-                    }
-                    if (achievementLevel18 || debugAchievementsView) {
-                        TetrominoView(tetromino: Tetromino.T, palletteIndex: 3)
-                            .frame(width: 80, height: 80)
-                            .rotationEffect(Angle(degrees: -5))
-                            .scaleEffect(0.3)
-                            .position(x: 70, y: 65)
-                    }
-                }
+                AchievementsView()
                     .offset(
                         x: 0,
-                        y: geometry.size.height - (smallScreen ? 120 : 100)
+                        y: geometry.size.height - (screenSize == .Small ? 120 : 100)
                     )
                     .blur(radius: 3)
                 
-                ZStack {
-                    ZStack {
-                        ControlButtonView(
-                            icon: "arrow.left",
-                            onTap: {
-                                model.move(dx: -1)
-                            },
-                            extraSmallScreen: extraSmallScreen,
-                            enableDas: true
-                        )
-                            .position(x: -arrowButtonsSpace, y: 0)
-                        
-                        ControlButtonView(
-                            icon: "arrow.right",
-                            onTap: {
-                                model.move(dx: 1)
-                            },
-                            extraSmallScreen: extraSmallScreen,
-                            enableDas: true
-                        )
-                            .position(x: arrowButtonsSpace, y: 0)
-                        
-                        ControlButtonView(
-                            icon: "arrow.down",
-                            onTap: {
-                                model.softDrop = true
-                            },
-                            onUntap: {
-                                model.softDrop = false
-                            },
-                            extraSmallScreen: extraSmallScreen
-                        )
-                            .position(x: 0, y: arrowButtonsSpace + 20)
-                    }
-                        .offset(x: 125, y: 0)
-                        .opacity(model.inProgress ? 1 : 0.4)
-                    
-                    ControlButtonView(
-                        icon: model.inProgress ? "arrow.clockwise" : "play.fill",
-                        onTap: {
-                            if (model.inProgress) {
-                                model.rotate()
-                            } else if (model.inPause) {
-                                model.play()
-                                
-                                moveSound.play()
-                            } else {
-                                model.run()
-                                
-                                dropSound.play()
-                            }
-                        },
-                        color: Color(model.inProgress ? Theme.textSecond : Theme.text),
-                        padding: 34,
-                        extraSmallScreen: extraSmallScreen
-                    )
-                        .font(.system(size: extraSmallScreen ? 24 : 30))
-                        .position(x: geometry.size.width - 80, y: 0)
-                }
-                .offset(x: 0, y: geometry.size.height - (smallScreen ? 150 : 250))
+                KeyboardView(size: geometry.size, model: model)
+                    .offset(x: 0, y: geometry.size.height - (screenSize == .Small ? 150 : 250))
             }
         }
         .onChange(of: scenePhase) { newPhase in

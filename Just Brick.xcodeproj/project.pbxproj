@@ -26,6 +26,7 @@
 		8DC039FA290735C100EB11F9 /* level-up.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039F3290735C100EB11F9 /* level-up.mp3 */; };
 		8DC039FB290735C100EB11F9 /* tetris.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039F4290735C100EB11F9 /* tetris.mp3 */; };
 		8DC039FD290D53E500EB11F9 /* achievement.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8DC039FC290D53E500EB11F9 /* achievement.mp3 */; };
+		8DDB0AF129DBFBB200114FCB /* HUDView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DDB0AF029DBFBB200114FCB /* HUDView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +50,7 @@
 		8DC039F3290735C100EB11F9 /* level-up.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "level-up.mp3"; sourceTree = "<group>"; };
 		8DC039F4290735C100EB11F9 /* tetris.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = tetris.mp3; sourceTree = "<group>"; };
 		8DC039FC290D53E500EB11F9 /* achievement.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = achievement.mp3; sourceTree = "<group>"; };
+		8DDB0AF029DBFBB200114FCB /* HUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +95,7 @@
 				8DC039CE2905875700EB11F9 /* MainView.swift */,
 				8DA53E6229D2C6FD000AD766 /* ControlButtonView.swift */,
 				8DA53E6429D2C74C000AD766 /* DesignTetrominosView.swift */,
+				8DDB0AF029DBFBB200114FCB /* HUDView.swift */,
 			);
 			path = "Just Blocks";
 			sourceTree = "<group>";
@@ -206,6 +209,7 @@
 				8D77ABB628FF4E58002E6BC3 /* Just_BlocksApp.swift in Sources */,
 				8DC039CB29056B0300EB11F9 /* theme.swift in Sources */,
 				8D77ABC428FF54B0002E6BC3 /* GameModel.swift in Sources */,
+				8DDB0AF129DBFBB200114FCB /* HUDView.swift in Sources */,
 				8DC039C929056AAF00EB11F9 /* GuideView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

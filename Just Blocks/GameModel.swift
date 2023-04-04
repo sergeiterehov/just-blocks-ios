@@ -210,6 +210,17 @@ class GameModel : ObservableObject {
         clock?.invalidate()
     }
     
+    func setTestState() -> GameModel {
+        reset();
+        
+        score = 100500
+        lines = 999
+        level = 99
+        startLevel = 12
+        
+        return self
+    }
+    
     func reset() {
         field = Array(repeating: .Empty, count: width * height)
         x = 0
